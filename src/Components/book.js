@@ -6,7 +6,7 @@ class Book extends Component {
     if (this.props.data.imageLinks) {
       return `url("${this.props.data.imageLinks.thumbnail}")`;
     } else {
-      return `url(https://drive.google.com/file/d/1F9SjlVTllkX32FnfWk38vmgqQlRm3hlo/view?usp=sharing)`;
+      return 'url(http://static1.squarespace.com/static/5bd5bff894d71a95eac2b9c8/5bf8b9b84ae237e15d431b12/5bf8bff38a922de88ed2f33d/1547880699400/no-image-icon-1.jpg?format=1500w)';
     }
   };
   render() {
@@ -20,6 +20,7 @@ class Book extends Component {
               width: 128,
               height: 192,
               backgroundImage: this.handleGenerateImage(),
+              backgroundPosition: "center"
             }}
           />
           <div className="book-shelf-changer">

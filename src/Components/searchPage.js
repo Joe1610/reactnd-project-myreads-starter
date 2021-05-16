@@ -27,7 +27,6 @@ class SearchPage extends Component {
           tmp.push({...curBooks[i], shelf: "none"});
         }
       }
-      console.log(tmp);
       this.setState({books: tmp, shelvesUpdated: true});
     }
 
