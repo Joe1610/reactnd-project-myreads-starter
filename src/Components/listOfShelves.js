@@ -24,8 +24,10 @@ class ListOfShelves extends Component {
         let curBook = allBooks[index];
         curBook.shelf = shelf;
         allBooks[index] = curBook;
-
-        this.setState({allBooks});
+        const currentlyReading = allBooks.filter(b => b.shelf === "currentlyReading");
+        const wantToRead = allBooks.filter(b => b.shelf === "wantToRead");
+        const read = allBooks.filter(b => b.shelf === "read");
+        this.setState({allBooks, currentlyReading, wantToRead, read});
         await BooksAPI.update(book, shelf);
     }
 
