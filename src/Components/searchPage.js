@@ -1,28 +1,88 @@
 import React, { Component } from 'react';
+import { Link } from "react-router-dom";
+import * as BooksAPI from '../BooksAPI';
+import Book from './book';
 
 class SearchPage extends Component {
-    state = {  }
+    state = {
+      books: [],
+      search: "",
+      shelvesUpdated: false
+    }
+
+    handleUpdateShelves = async () => {
+      const allBooks = await BooksAPI.getAll();
+      let curBooks = [...this.state.books];
+      console.log(curBooks);
+      let tmp = [];
+      for(let i=0; i<curBooks.length; i++){
+        let valid = false;
+        for(let j=0; j<allBooks.length; j++){
+          if(allBooks[j].id === curBooks[i].id){
+            tmp.push({...curBooks[i], shelf: allBooks[j].shelf});
+            valid = true;
+          }
+        }
+        if(!valid){
+          tmp.push({...curBooks[i], shelf: "none"});
+        }
+      }
+      console.log(tmp);
+      this.setState({books: tmp, shelvesUpdated: true});
+    }
+
+    handleSearch = async (search) => {
+      this.setState({search});
+
+      let searchBooks = await BooksAPI.search(search);
+      if(!searchBooks || searchBooks.error) searchBooks = [];
+      this.setState({books: searchBooks, shelvesUpdated: false});
+    }
+
+    handleAddBookToShelf = async(book, shelf) => {
+      let allBooks = [...this.state.books];
+      const index = allBooks.indexOf(book);
+      let curBook = allBooks[index];
+      curBook.shelf = shelf;
+      allBooks[index] = curBook;
+
+      this.setState({allBooks});
+      await BooksAPI.update(book, shelf);
+    }
+    componentDidUpdate() {
+      if(!this.state.shelvesUpdated){
+        this.handleUpdateShelves();
+      }
+    }
+
     render() { 
+      let {books} = this.state;
+      if(!this.state.search){
+        books = [];
+      }
         return (
             <div className="search-books">
             <div className="search-books-bar">
-              <button className="close-search" onClick={() => this.setState({ showSearchPage: false })}>Close</button>
+              <Link to="/">
+              <button className="close-search">Close</button>
+              </Link>
               <div className="search-books-input-wrapper">
-                {/*
-                  NOTES: The search from BooksAPI is limited to a particular set of search terms.
-                  You can find these search terms here:
-                  https://github.com/udacity/reactnd-project-myreads-starter/blob/master/SEARCH_TERMS.md
-
-                  However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
-                  you don't find a specific author or title. Every search is limited by search terms.
-                */}
-                <input type="text" placeholder="Search by title or author"/>
-
+                <input
+                 type="text"
+                 placeholder="Search by title or author"
+                 onChange={e => {
+                   this.handleSearch(e.target.value)
+                  }}
+                />
               </div>
             </div>
             <div className="search-books-results">
               <ol className="books-grid">
-                  {}
+                  {(books.length>0 ? books.map(book => (
+                         <li key = {book.id}>
+                             <Book  data={book} onShelfUpdate={this.handleAddBookToShelf}/>
+                         </li>
+                     )): <p>No data</p>)}
               </ol>
             </div>
           </div>
