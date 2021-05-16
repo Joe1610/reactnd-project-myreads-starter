@@ -13,7 +13,6 @@ class SearchPage extends Component {
     handleUpdateShelves = async () => {
       const allBooks = await BooksAPI.getAll();
       let curBooks = [...this.state.books];
-      console.log(curBooks);
       let tmp = [];
       for(let i=0; i<curBooks.length; i++){
         let valid = false;

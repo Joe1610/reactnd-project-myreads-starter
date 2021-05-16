@@ -12,7 +12,6 @@ class ListOfShelves extends Component {
 
     async componentDidMount() {
         const allBooks = await BooksAPI.getAll();
-        console.log(allBooks);
         const currentlyReading = allBooks.filter(b => b.shelf === "currentlyReading");
         const wantToRead = allBooks.filter(b => b.shelf === "wantToRead");
         const read = allBooks.filter(b => b.shelf === "read");
